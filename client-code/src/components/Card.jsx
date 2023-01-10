@@ -5,18 +5,31 @@ function Card() {
   const [value, setValue] = React.useState("");
   // test
   const fetchURL = async () => {
-    try {
-      const res = await fetch("http://localhost:5000/save", {
-        method: "POST",
-        mode: "cors",
-        body: JSON.stringify(value),
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-        },
-      });
-      const data = await res.json();
-      setShortenLink(data.result.full_short_link);
-    } catch (err) {}
+    var formdata = new FormData();
+    formdata.append("url", value);
+
+    var requestOptions = {
+      method: "POST",
+      body: formdata,
+      redirect: "follow",
+    };
+
+    fetch("http://localhost:5000/save", requestOptions)
+      .then((response) => response.text())
+      .then((result) => setShortenLink(result))
+      .catch((error) => setShortenLink("Error: ", error));
+    // try {
+    //   const res = await fetch("http://localhost:5000/save", {
+    //     method: "POST",
+    //     mode: "cors",
+    //     body: JSON.stringify(value),
+    //     headers: {
+    //       "Content-type": "application/json; charset=UTF-8",
+    //     },
+    //   });
+    //   const data = await res.json();
+    //   setShortenLink(data.result.full_short_link);
+    // } catch (err) {}
   };
 
   function handleClick() {
