@@ -5,19 +5,23 @@ function Card() {
   const [value, setValue] = React.useState("");
   // test
   const fetchURL = async () => {
-    var formdata = new FormData();
-    formdata.append("url", value);
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
+
+    var urlencoded = new URLSearchParams();
+    urlencoded.append("url", value);
 
     var requestOptions = {
       method: "POST",
-      body: formdata,
+      headers: myHeaders,
+      body: urlencoded,
       redirect: "follow",
     };
 
-    fetch("http://localhost:5000/save", requestOptions)
-      .then((response) => response.text())
-      .then((result) => setShortenLink(result))
-      .catch((error) => setShortenLink("Error: ", error));
+    fetch("http://localhost:5000/add", requestOptions)
+      .then((response) => response.json())
+      .then((result) => setShortenLink(result.code))
+      .catch((error) => setShortenLink(`Error: ${error}`));
     // try {
     //   const res = await fetch("http://localhost:5000/save", {
     //     method: "POST",

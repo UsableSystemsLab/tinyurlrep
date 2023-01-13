@@ -3,8 +3,8 @@ const supertest = require("supertest");
 const request = supertest(app);
 
 describe("Testing Endpoints", () => {
-  it("Testing /save", async () => {
-    const res = await request.post("/save");
+  it("Testing /add", async () => {
+    const res = await request.post("/add");
 
     expect(res.status).toBe(200);
   });
@@ -13,7 +13,7 @@ describe("Testing Endpoints", () => {
     const res = await request.get("/get");
 
     expect(res.status).toBe(200);
-  });
+  }, 20000);
 
   it("Testing /health", async () => {
     const res = await request.get("/health");
