@@ -25,25 +25,17 @@ app.post("/add", (req, res) => {
   const short = nanoid.nanoid();
   const long_url = req.body.url;
 
-  pool.query(
-    "INSERT INTO public.tinyurl(long_url, short_code) VALUES($1, $2)",
-    [long_url, short]
-  );
+  pool.add(long_url, short);
+
   res.send({ code: `${short}` });
 });
 
 // HTTP GET: get the long url by the short code
 // HTTP GET http://host:port/get?code=gdfte545 => postgres => return to longurl => client will HTTP redirect
-app.get("/get", (req, res) => {
+app.get("/get", async (req, res) => {
   const code = req.query.code;
-  pool.query(
-    "SELECT long_url FROM public.tinyurl WHERE short_code = $1",
-    [code],
-    (err, result) => {
-      if (!err) res.send(result.rows[0]);
-      else res.send(err.message);
-    }
-  );
+
+  res.send(await pool.get(code));
 });
 
 // HTTP GET requests

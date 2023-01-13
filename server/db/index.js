@@ -12,4 +12,17 @@ module.exports = {
   query: (text, params, callback) => {
     return pool.query(text, params, callback);
   },
+  add: (long_url, short) => {
+    return pool.query(
+      "INSERT INTO public.tinyurl(long_url, short_code) VALUES($1, $2)",
+      [long_url, short]
+    );
+  },
+  get: async (code) => {
+    const { rows } = await pool.query(
+      "SELECT long_url FROM public.tinyurl WHERE short_code = $1",
+      [code]
+    );
+    return rows[0];
+  },
 };
