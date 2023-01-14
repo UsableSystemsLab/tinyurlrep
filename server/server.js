@@ -19,7 +19,7 @@ module.exports = function (database) {
   // HTTP POST http://host:port/add body -> https://github.com => gdfte545 => store in postgresdb => respond with short code
   app.post("/add", async (req, res) => {
     const short = nanoid.nanoid();
-    const { url } = await req.body;
+    const { url } = req.body;
 
     await database.add(url, short);
 

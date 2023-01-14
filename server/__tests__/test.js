@@ -15,11 +15,11 @@ beforeEach(() => {
 
 describe("Testing Endpoints", () => {
   it("Testing /add", async () => {
-    await request.post("/add").send("https://jestjs.io/docs/mock-functions");
+    await request
+      .post("/add")
+      .send({ url: "https://jestjs.io/docs/mock-functions" });
     expect(add.mock.calls.length).toBe(1);
-    expect(await add.mock.calls[0][0]).toBe(
-      "https://jestjs.io/docs/mock-functions"
-    );
+    expect(add.mock.calls[0][0]).toBe("https://jestjs.io/docs/mock-functions");
   });
 
   it("Testing /get", async () => {
