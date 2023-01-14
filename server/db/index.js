@@ -12,9 +12,9 @@ module.exports = {
   query: (text, params, callback) => {
     return pool.query(text, params, callback);
   },
-  add: (long_url, short) => {
-    return pool.query(
-      "INSERT INTO public.tinyurl(long_url, short_code) VALUES($1, $2)",
+  add: async (long_url, short) => {
+    return await pool.query(
+      "INSERT INTO public.tinyurl(long_url, short_code) VALUES($1, $2) RETURNING url_id",
       [long_url, short]
     );
   },
@@ -23,6 +23,6 @@ module.exports = {
       "SELECT long_url FROM public.tinyurl WHERE short_code = $1",
       [code]
     );
-    return rows[0];
+    return rows[0].long_url;
   },
 };
