@@ -2,7 +2,6 @@ version: 2.1
 
 jobs:
   build:
-    working_directory: /home/circleci/project/server
     docker:
       - image: cimg/node:19.4.0
     steps:
@@ -14,12 +13,11 @@ jobs:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
-          key: dependency-cache-{{checksum "package-lock.json"}}
+          key: dependency-cache-{{checksum "server/package-lock.json"}}
       - run:
           name: install-npm
           command: npm install
       - save_cache:
-          key: dependency-cache-{{checksum "package-lock.json"}}
+          key: dependency-cache-{{checksum "server/package-lock.json"}}
           paths:
             - ./node_modules
-#a
