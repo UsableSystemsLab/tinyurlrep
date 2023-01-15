@@ -11,12 +11,10 @@ jobs:
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
-      - run: 
-          name: change-dir
-          command: cd server
       - run:
           name: install-npm
           command: npm install
+          path: ./server
       - save_cache:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
           paths:
