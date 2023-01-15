@@ -13,7 +13,7 @@ jobs:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
       - run: 
           name: change-dir
-          command: sudo cd server
+          command: cd server
       - run:
           name: install-npm
           command: npm install
