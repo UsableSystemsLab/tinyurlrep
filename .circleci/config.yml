@@ -6,14 +6,14 @@ jobs:
       - image: cimg/node:19.4.0
     steps:
       - checkout
-#       - run:
-#           name: enter-server
-#           command: cd server
       - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
+      - run: 
+          name: change-dir
+          command: sudo cd server
       - run:
           name: install-npm
           command: npm install
