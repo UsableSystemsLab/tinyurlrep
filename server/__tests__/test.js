@@ -31,10 +31,21 @@ describe("Testing Endpoints", () => {
   });
 
   it("Testing /get", async () => {
-    const res = await request.get("/get").send({
-      code: "t1fTgsUO6Crn0_RXfBkHD",
-    });
-    expect(res.statusCode).toBe(200);
+    // const res = await request.get("/get").send({
+    //   code: "t1fTgsUO6Crn0_RXfBkHD",
+    // });
+    // expect(res.statusCode).toBe(200);
+    const bodyData = [
+      { code: "XPosvq8H1GjYeCNmaeXo3" },
+      { code: "Qtpv2_L78Is4AkWmc9Wuh" },
+      { code: "mMBaBzRxfeXFiXZuCPvfZ" },
+    ];
+    for (const body of bodyData) {
+      get.mockReset();
+      await request.get(`/get?code=${body.code}`);
+      expect(get.mock.calls.length).toBe(1);
+      expect(await get.mock.calls[0][0]).toBe(body.code);
+    }
   });
 
   it("Testing /health", async () => {
