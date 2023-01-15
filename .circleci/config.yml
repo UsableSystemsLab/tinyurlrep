@@ -4,11 +4,11 @@ jobs:
   build:
     docker:
       - image: cimg/node:19.4.0
-      steps:
+    steps:
       - checkout
       - run:
           name: update-npm
-          command: sudo npm install -g npm
+          command: 'sudo npm install -g npm@5'
       - restore_cache:
           key: dependency-cache-{{ checksum "package-lock.json" }}
       - run:
