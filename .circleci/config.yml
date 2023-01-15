@@ -2,9 +2,9 @@ version: 2.1
 
 jobs:
   build:
+    working-directory: /home/circleci/project/server
     docker:
       - image: cimg/node:19.4.0
-      - working-directory: /home/circleci/project/server
     steps:
       - checkout
 #       - run:
