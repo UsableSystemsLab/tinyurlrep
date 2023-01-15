@@ -1,3 +1,4 @@
+const defaults = require("superagent-defaults");
 const APP = require("../server.js");
 const supertest = require("supertest");
 
@@ -8,18 +9,25 @@ const app = APP({
   add,
   get,
 });
-const request = supertest(app);
+const request = defaults(supertest(app));
+request.set({ "content-type": "application/x-www-form-urlencoded" });
 beforeEach(() => {
   add.mockReset();
 });
 
 describe("Testing Endpoints", () => {
   it("Testing /add", async () => {
-    await request
-      .post("/add")
-      .send({ url: "https://jestjs.io/docs/mock-functions" });
-    expect(add.mock.calls.length).toBe(1);
-    expect(add.mock.calls[0][0]).toBe("https://jestjs.io/docs/mock-functions");
+    const bodyData = [
+      { url: "https://learn.cantrill.io/" },
+      { url: "https://jestjs.io/docs/mock-functions" },
+      { url: "https://asana.com/resources/story-points" },
+    ];
+    for (const body of bodyData) {
+      add.mockReset();
+      await request.post("/add").send(body);
+      expect(add.mock.calls.length).toBe(1);
+      expect(await add.mock.calls[0][0]).toBe(body.url);
+    }
   });
 
   it("Testing /get", async () => {

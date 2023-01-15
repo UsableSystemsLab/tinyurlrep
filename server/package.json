@@ -17,6 +17,7 @@
   },
   "devDependencies": {
     "jest": "^29.3.1",
+    "superagent-defaults": "^0.1.14",
     "supertest": "^6.3.3"
   }
 }
