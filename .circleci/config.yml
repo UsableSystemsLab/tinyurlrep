@@ -9,6 +9,7 @@ jobs:
       - run:
           name: enter-server
           command: cd server
+      - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
       - restore_cache:
