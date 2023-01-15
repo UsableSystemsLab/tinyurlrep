@@ -4,11 +4,12 @@ jobs:
   build:
     docker:
       - image: cimg/node:19.4.0
+      - working-directory: /home/circleci/project/server
     steps:
       - checkout
-      - run:
-          name: enter-server
-          command: cd server
+#       - run:
+#           name: enter-server
+#           command: cd server
       - run:
           name: update-npm
           command: 'sudo npm install -g npm@latest'
