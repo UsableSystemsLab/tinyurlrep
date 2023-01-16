@@ -19,3 +19,6 @@ jobs:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
           paths:
             - ./node_modules
+      - run:
+          name: testing
+          command: npm run test
