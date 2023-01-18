@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@3.2.3
+
 jobs:
   build:
     docker:
@@ -19,7 +22,5 @@ jobs:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
           paths:
             - ./node_modules
-      - run:
-          name: testing
-          command: npm run test
-          path: ./server
+      - run: jest --coverage
+      - codecov/upload
