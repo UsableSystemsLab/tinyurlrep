@@ -22,7 +22,5 @@ jobs:
           key: dependency-cache-{{checksum "server/package-lock.json"}}
           paths:
             - ./node_modules
-      - run: jest --coverage
+      - run: npm test -- --coverage
       - codecov/upload
-      
-  #aa
