@@ -19,10 +19,14 @@ module.exports = {
     );
   },
   get: async (code) => {
-    const { rows } = await pool.query(
-      "SELECT long_url FROM public.tinyurl WHERE short_code = $1",
-      [code]
-    );
-    return rows[0].long_url;
+    try {
+      const { rows } = await pool.query(
+        "SELECT long_url FROM public.tinyurl WHERE short_code = $1",
+        [code]
+      );
+      return rows[0].long_url;
+    } catch (e) {
+      return 422;
+    }
   },
 };

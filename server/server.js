@@ -30,8 +30,9 @@ module.exports = function (database) {
   // HTTP GET http://host:port/get?code=gdfte545 => postgres => return to longurl => client will HTTP redirect
   app.get("/get", async (req, res) => {
     const code = req.query.code;
-
-    res.send(await database.get(code));
+    const getUrl = await database.get(code);
+    if (getUrl === 422) res.status(getUrl).send("Missing Parameters");
+    else res.send(getUrl);
   });
 
   // HTTP GET requests
