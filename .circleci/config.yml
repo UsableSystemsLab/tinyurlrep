@@ -1,0 +1,28 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@3.2.3
+
+jobs:
+  build:
+    docker:
+      - image: cimg/node:19.4.0
+    steps:
+      - checkout
+      - run:
+          name: update-npm
+          command: 'sudo npm install -g npm@latest'
+      - restore_cache:
+          key: dependency-cache-{{checksum "server/package-lock.json"}}
+      - run:
+          name: install-npm
+          command: npm install
+          path: ./server
+      - save_cache:
+          key: dependency-cache-{{checksum "server/package-lock.json"}}
+          paths:
+            - ./node_modules
+      - run: 
+          command: npm test -- --coverage
+          path: ./server
+      - codecov/upload
