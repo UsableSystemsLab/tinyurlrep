@@ -3,8 +3,10 @@ import React from "react";
 function Card() {
   const [shortenLink, setShortenLink] = React.useState("");
   const [value, setValue] = React.useState("");
+  const [url, setUrl] = React.useState("");
+  var temp = null;
   // test
-  const fetchURL = async () => {
+  const fetchCode = async () => {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
 
@@ -20,25 +22,32 @@ function Card() {
 
     fetch("http://localhost:5000/add", requestOptions)
       .then((response) => response.json())
-      .then((result) => setShortenLink(result.code))
+      .then((result) => (temp = result.code))
+      .then(() => {
+        setShortenLink(temp);
+        console.log(temp);
+        fetchUrl(temp);
+      })
       .catch((error) => setShortenLink(`Error: ${error}`));
-    // try {
-    //   const res = await fetch("http://localhost:5000/save", {
-    //     method: "POST",
-    //     mode: "cors",
-    //     body: JSON.stringify(value),
-    //     headers: {
-    //       "Content-type": "application/json; charset=UTF-8",
-    //     },
-    //   });
-    //   const data = await res.json();
-    //   setShortenLink(data.result.full_short_link);
-    // } catch (err) {}
+  };
+
+  const fetchUrl = async (code) => {
+    var requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+
+    fetch(`http://localhost:5000/get?code=${code}`, requestOptions)
+      .then((response) => response.text())
+      .then((result) => setUrl(result))
+      .catch((error) => console.log("error", error));
   };
 
   function handleClick() {
     setValue("");
-    if (value) fetchURL();
+    if (value) {
+      fetchCode();
+    }
   }
 
   return (
@@ -59,8 +68,8 @@ function Card() {
         </button>
       </div>
       <p>
-        URL :{" "}
-        <a href={shortenLink} target="_blank" rel="noreferrer">
+        <span>URL: </span>
+        <a href={url} target="_blank" rel="noreferrer">
           {shortenLink}
         </a>
       </p>
