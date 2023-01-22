@@ -1,0 +1,204 @@
+openapi: '3.0.0'
+info:
+  version: '0.0.1'
+  title: 'TinyURLClone API'
+  description: The TinyURLClone API is a sample API for a URL shortner service that takes a long URL and returns a short URL that can be redirected to the original URL. This API transforms long URLs into much shorter URLs that can be shared and redirected to the original long URL. The API also allows modifying or deleting an existing shortURL.
+
+servers:
+- url: https://api.{domain}:{port}/{basePath}
+  description: The development API server
+  variables:
+    domain:
+      default: 'example.com'
+    port:
+      enum:
+        - '80'
+        - '443'
+      default: '80'
+    basePath:
+      default: 'v2'
+tags:
+- name: tinyURL
+  description: tinyURLs are short URLs that redirects to the longer links.
+
+paths:
+  /create:
+    description: tinyURLs are short URLs that redirects to the longer links.
+    post:
+      tags:
+      - tinyURL
+      operationId: create
+      summary: Creates a short URL for the provided long URL and shorten it into a short URL.
+      requestBody:
+        description: The long URL to be shorten
+        required: true
+        content: 
+          'application/x-www-form-urlencoded':
+            schema:
+              $ref: '#/components/schemas/LongURLData'
+      responses:
+        '200':
+          description: The long URL was successfully shorten to a shorter URL (alias)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/URLAliasData'
+        '401':
+          description: You're unauthorized to create a short URL.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnauthorizedError'
+                
+        '422':
+          description: Validation failed on one of the properties, please check the errors in the response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableEntityError'
+        '5XX':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedServerError'
+  /alias/{alias}:
+    description: Get TinyURL information
+    parameters:
+      - name: 'alias'
+        in: path
+        description: the short code URL alias
+        required: true
+        schema:
+          type: string
+          example: 'abcdef'
+    get:
+      tags:
+      - tinyURL
+      operationId: getTinyURL
+      summary: Retrieves the long URL and associated information by the provided alias (short code) URL.
+      responses:
+        '200':
+          description: Returns the long URL and information corresponding to the provided alias
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/URLAliasData'
+        '404':
+          description: No long URL found for the provided `alias`. Unable to find URL to redirect to.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotFoundError'
+                
+              
+        '422':
+          description: Validation failed on one of the properties, please check the errors in the response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnprocessableEntityError'
+        '5XX':
+          description: Unexpected error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnexpectedServerError'
+components:
+  schemas:
+  
+    LongURLData:
+      description: Data for the long URL to be shorten
+      type: object
+      required:
+      - url
+      properties:
+        url:
+          description: the long URL
+          type: string
+          example: 'https://www.example.com/my-really-long-link-that-I-need-to-shorten/'
+        alias:
+          description: A custom alias (short code)
+          type: string
+          example: 'myshortcode'
+      
+    URLAliasData:
+      description: URL alias data contains data about the short unique identifier (alias)
+      type: object
+      required:
+        - alias
+      properties:
+        url:
+          description: the long URL
+          type: string
+          example: 'https://www.example.com/my-really-long-link-that-I-need-to-shorten/'
+        alias:
+          description: the alias (short code) to the long URL
+          type: string
+          example: 'myshortcode'
+        expires_at:
+          description: TinyURL expiration as defined by date-time - RFC3339. When it's set to null, it will never expires.
+          type: string
+          format: date-time
+          nullable: true
+          example: '2026-01-20 10:11:12'
+          
+    ErrorModel:
+      type: object
+      required:
+        - message
+        - code
+      properties:
+        message:
+          type: string
+          description: A human readable error message
+        code:
+          type: integer
+          minimum: 100
+          maximum: 600
+          description: HTTP status code
+    ExtendedErrorModel:
+      allOf:
+      - $ref: '#/components/schemas/ErrorModel'
+      - type: object
+        required:
+        - rootCause
+        properties:
+          rootCause:
+            type: string
+    NotFoundError:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedErrorModel'
+      example:
+        message: 'Error: Unable to find URL to redirect to.'
+        code: 404
+        rootCause: 'The alias to the URL is not correct or has been deleted.'
+    UnprocessableEntityError:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedErrorModel'
+      example:
+        message: 'There was an unexpected error processing your request'
+        code: 422
+        rootCause: 'Possible reasons and more details'
+    UnauthorizedError:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedErrorModel'
+      example:
+        message: 'You are not authorized to access this API endpoint. Please check your API token'
+        code: 401
+        rootCause: 'Possible reasons and more details'
+    UnexpectedServerError:
+      allOf:
+      - $ref: '#/components/schemas/ExtendedErrorModel'
+      example:
+        message: 'There was an unexpected error processing your request"'
+        code: 500
+        rootCause: 'Something went wrong'
+        
+  securitySchemes:
+    ApiKey:
+      type: apiKey
+      name: api_key
+      in: header
+security:
+  - ApiKey: []
